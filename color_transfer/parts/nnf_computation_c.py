@@ -117,7 +117,7 @@ def bds_vote(ref, nnf_sr, nnf_rs, patch_size=3, w=8):
 
 
 def test():
-    from scipy.misc import imread
+    from color_transfer.parts.pilutil import imread
     from random import randint
 
     from color_transfer.parts.nnf_computation import PatchMatch
@@ -127,7 +127,7 @@ def test():
     src = imread(img_src)
     ref = imread(img_ref)
 
-    from scipy.misc import imresize
+    from color_transfer.parts.pilutil import imresize
     size = (224, 224)
     src = imresize(src, size)
     ref = imresize(ref, size)

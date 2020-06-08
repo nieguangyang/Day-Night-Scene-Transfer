@@ -74,8 +74,8 @@ class ClusterTransfer:
         :param n_clusters: number of clusters, it depends on how many elements in the image
         :param interp: 0 - nearest, 1 - lanczos, 2 - bilinear, 3 - cubic
         :param normalize: normalization per channel, "rescale" / "standardize"
-        :param total_iter:
-        :param epochs:
+        :param total_iter: number of iterations for PatchMatch
+        :param epochs: number of epochs for transfer estimate
         :return transferred: color-transferred image
         """
         start_time = time()
@@ -108,16 +108,19 @@ class ClusterTransfer:
 
 
 def test():
+    # download from: https://github.com/fchollet/deep-learning-models/releases/download/v0.1/vgg19_weights_tf_dim_ordering_tf_kernels_notop.h5
+    # set path to the weights file
     weights = "D:/vgg19_weights_tf_dim_ordering_tf_kernels_notop.h5"
 
+    # choose your source and reference images
     from color_transfer.img import PATH
     src_file, ref_file = PATH + "/day.jpg", PATH + "/night.jpg"
 
     src = imread(src_file)
     ref = imread(ref_file)
 
+    # parameters, normally no need to change
     patch_match_c = True
-    # patch_match_c = False
     interp = 2  # bilinear
     normalize = "standardize"
     level = 1
@@ -125,6 +128,7 @@ def test():
     total_iter = 5  # number of iterations for PatchMatch
     epochs = 250  # number of epochs for transfer estimate
 
+    # color transfer
     ct = ClusterTransfer(weights, patch_match_c)
     transferred = ct.transfer(src, ref, level, n_clusters, interp, normalize, total_iter, epochs)
     display([src, ref, transferred])
