@@ -1,8 +1,8 @@
 # Day-Night-Scene-Transfer
 ![image](https://github.com/nieguangyang/Day-Night-Scene-Transfer/blob/master/img/day2night.jpg)  
 
-example:  
-Day-Night-Scene-Transfer\color_transfer\cluster_transefer.py  
+runable example:  
+https://github.com/nieguangyang/Day-Night-Scene-Transfer/blob/master/color_transfer/cluster_transfer.py  
 
 
 base on:  
