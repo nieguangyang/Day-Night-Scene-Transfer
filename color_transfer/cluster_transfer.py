@@ -122,8 +122,8 @@ def test():
     normalize = "standardize"
     level = 1
     n_clusters = 3  # 3 for sky, building and ground
-    total_iter = 5
-    epochs = 250
+    total_iter = 5  # number of iterations for PatchMatch
+    epochs = 250  # number of epochs for transfer estimate
 
     ct = ClusterTransfer(weights, patch_match_c)
     transferred = ct.transfer(src, ref, level, n_clusters, interp, normalize, total_iter, epochs)
