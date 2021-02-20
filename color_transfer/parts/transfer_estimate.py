@@ -347,6 +347,6 @@ def transfer_estimate(s, g, fs, fg, lambda_d=1., lambda_l=0.125, lambda_nl=2.0, 
     y = [np.zeros((1, 1)), np.zeros((1, 1)), np.zeros((1, 1))]
     model.fit(x, y, epochs=epochs)
     # color_transfer
-    a, b = model.get_layer("color_transfer").get_weights()[2:]
+    a, b = model.get_layer("color_transfer").get_weights()[-2:]
     t = a * s + b
     return t, a, b

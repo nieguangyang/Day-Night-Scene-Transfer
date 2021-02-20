@@ -4,15 +4,16 @@ https://github.com/Vladkryvoruchko/PSPNet-Keras-tensorflow
 """
 import os
 import numpy as np
+import tensorflow as tf
 from keras.layers import Conv2D, BatchNormalization, Activation
 from keras.layers import ZeroPadding2D, Add, MaxPooling2D
 from keras.layers import Layer, AveragePooling2D, Concatenate
 from keras.layers import Input, Dropout
-from keras.backend import tf as ktf
 from keras.models import Model
 from keras.optimizers import SGD
 
 from color_transfer.parts.pilutil import preprocess
+from color_transfer.weights import PSPNET50_ADE20K_WEIGHTS, PATH
 
 
 def conv2d(n_filters, kernel_size, strides=1, padding="valid", dilation_rate=1, **args):
@@ -146,7 +147,8 @@ class Interp(Layer):
         super(Interp, self).build(input_shape)
 
     def call(self, inputs, **kwargs):
-        resized = ktf.image.resize_images(inputs, self.target_size, align_corners=True)
+        # resized = ktf.image.resize_images(inputs, self.target_size, align_corners=True)
+        resized = tf.image.resize(inputs, self.target_size)
         return resized
 
     def compute_output_shape(self, input_shape):
@@ -230,22 +232,19 @@ def build_pspnet(input_shape, n_resnet_layers, n_classes):
     return model
 
 
-def pspnet50_ade20k(weights=None):
+def pspnet50_ade20k():
     """
     PSPNet pre-trained on ADE20K.
-    :param weights: full path to pre-trained weights file
-    :return:
     """
-    if weights is None:
-        path = "/".join(os.path.realpath(__file__).replace("\\", "/").split("/")[:-1])
-        weights = path + "/pspnet50_ade20k.h5"
-        if not os.path.exists(weights):
-            link = "https://www.dropbox.com/s/0uxn14y26jcui4v/pspnet50_ade20k.h5"
-            instr = "\n".join((
-                "Please down weight file from %s " % link,
-                "and put it under directory %s" % path
-            ))
-            raise Exception(instr)
+    weights = PSPNET50_ADE20K_WEIGHTS
+    if not os.path.exists(weights):
+        filename = weights.split("/")[-1]
+        link = "https://www.dropbox.com/s/0uxn14y26jcui4v/pspnet50_ade20k.h5"
+        instr = (
+            "Please download weight file %s from %s,\n" % (filename, link),
+            "then put it under directory %s" % PATH
+        )
+        raise Exception(instr)
     input_shape = (473, 473)
     n_resnet_layers = 50
     n_classes = 150
@@ -432,11 +431,8 @@ class PSPNet50ADE20K:
     """
     PSPNet50 pre-trained on ADE20K.
     """
-    def __init__(self, weights=None):
-        """
-        :param weights: full path to pre-trained weights file
-        """
-        self.model = pspnet50_ade20k(weights)
+    def __init__(self):
+        self.model = pspnet50_ade20k()
         self.size = self.model.input_shape[1:-1]
 
     def predict(self, img):

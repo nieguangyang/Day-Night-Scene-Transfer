@@ -12,3 +12,6 @@ Mingming He, Jing Liao, Dongdong Chen, Lu Yuan, Pedro V. Sander (2018). Progress
 algorithm details:  
 https://github.com/nieguangyang/Day-Night-Scene-Transfer/blob/master/Day-Night%20Scene%20Transfer.docx  
 
+paper of this project:  
+https://link.springer.com/chapter/10.1007/978-981-15-6568-7_12
+

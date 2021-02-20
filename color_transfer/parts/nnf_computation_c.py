@@ -9,6 +9,8 @@ path = "/".join(os.path.realpath(__file__).replace("\\", "/").split("/")[:-1])
 patch_match_win_64 = path + "/patch_match_win_64.so"
 # gcc -fPIC -shared -m64 patch_match.c -o patch_match_linux_64.so
 patch_match_linux_64 = path + "/patch_match_linux_64.so"
+# gcc -fPIC -shared -m64 patch_match.c -o patch_match_mac_64.so
+patch_match_mac_64 = path + "/patch_match_mac_64.so"
 
 
 # void patch_match
@@ -28,9 +30,10 @@ def patch_match(a, b, patch_size=3, total_iter=5):
         elif sys == "Linux":
             patch_match_lib = patch_match_linux_64
         else:
-            Exception("No support for Mac.")
+            # raise Exception("No support for Mac yet.")
+            patch_match_lib = patch_match_mac_64
     else:
-        Exception("No support for 32bit.")
+        raise Exception("No support for 32bit.")
     patch_match_c = CDLL(patch_match_lib)
     patch_match_c.calc_dist.restype = c_double
     patch_match_c.improve_guess.restype = None
