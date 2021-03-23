@@ -7,8 +7,7 @@ from color_transfer.parts.pilutil import imread
 
 path = "/".join(os.path.realpath(__file__).replace("\\", "/").split("/")[:-1])
 pattern = path + "/%d.jpg"
-weights = "E:/ai/weights/pretrained/pspnet50_ade20k.h5"
-psp = PSPNet50ADE20K(weights)
+psp = PSPNet50ADE20K()
 for i in range(10):
     file = pattern % i
     img = imread(file)

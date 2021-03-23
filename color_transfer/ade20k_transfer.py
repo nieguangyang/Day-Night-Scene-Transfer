@@ -12,14 +12,12 @@ from color_transfer.parts.transfer_estimate import transfer_estimate
 
 
 class ADE20KTransfer:
-    def __init__(self, vgg19_imagenet_weights, pspnet50_ade20k_weights, patch_match_c=True):
+    def __init__(self, patch_match_c=True):
         """
-        :param vgg19_imagenet_weights: full path to weights of VGG19 pre-trained on ImageNet (download from https://github.com/fchollet/deep-learning-models/releases/download/v0.1/vgg19_weights_tf_dim_ordering_tf_kernels_notop.h5)
-        :param pspnet50_ade20k_weights: full path to weights of PSPNet50 pre-trained on (download from https://www.dropbox.com/s/0uxn14y26jcui4v/pspnet50_ade20k.h5)
         :param patch_match_c: whether use C-implemented patch match, which is far more efficient than the python one
         """
-        self.vgg19 = FeatureFromVGG19ImageNet(vgg19_imagenet_weights)
-        self.psp50 = PSPNet50ADE20K(pspnet50_ade20k_weights)
+        self.vgg19 = FeatureFromVGG19ImageNet()
+        self.psp50 = PSPNet50ADE20K()
         if patch_match_c:
             self.nn_search = nn_search_c
             self.bds_vote = bds_vote_c
@@ -50,6 +48,7 @@ class ADE20KTransfer:
         # concat feature map and label
         fs = np.concatenate([lbs, fs], axis=2)
         fr = np.concatenate([lbr, fr], axis=2)
+        # nnf_sr, nnf_rs = self.nn_search(fs, fr)
         nnf_sr, nnf_rs = self.nn_search(fs, fr)
         g = self.bds_vote(r, nnf_sr, nnf_rs)  # r size wrong
         fg = self.bds_vote(fr, nnf_sr, nnf_rs)
@@ -76,22 +75,16 @@ def display(images, rows=1, columns=None):
 
 
 def test():
-    vgg19_imagenet_weights = "E:/ai/weights/pretrained/vgg19_weights_tf_dim_ordering_tf_kernels_notop.h5"
-    pspnet50_ade20k_weights = "E:/ai/weights/pretrained/pspnet50_ade20k.h5"
-
-    from color_transfer.img import PATH
-    src_file, ref_file = PATH + "/day.jpg", PATH + "/night.jpg"
-
+    from color_transfer.img import DAY, NIGHT
+    src_file = DAY
+    ref_file = NIGHT
     src = imread(src_file)
     ref = imread(ref_file)
-
     patch_match_c = True
-    # patch_match_c = False
     interp = 2  # bilinear
     normalize = "standardize"
     level = 1
-
-    t = ADE20KTransfer(vgg19_imagenet_weights, pspnet50_ade20k_weights, patch_match_c)
+    t = ADE20KTransfer(patch_match_c)
     transferred = t.transfer(src, ref, level, interp, normalize)
     display([src, ref, transferred])
 

@@ -24,7 +24,7 @@ class PatchMatch(object):
 
     def calc_dist(self, ay, ax, by, bx):
         """
-        Calculate calc_dist between a patch in A to a patch in B.
+        Calculate distance between a patch in A to a patch in B.
         :return: Distance calculated between the two patches
         """
         d = self.patch_size // 2  # half patch size

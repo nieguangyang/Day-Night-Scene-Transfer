@@ -4,6 +4,7 @@ from keras.layers import Input, Conv2D, MaxPooling2D, ReLU
 from keras.models import Model
 
 from color_transfer.parts.pilutil import preprocess
+from color_transfer.weights import VGG19_IMAGENET_WEIGHTS, PATH
 
 
 def vgg_block(filters, conv_layers, block_id):
@@ -55,25 +56,22 @@ def vgg19(weights=None):
     return build_vgg(input_shape, block_filters, block_layers, weights)
 
 
-def vgg19_imagenet(weights=None):
+def vgg19_imagenet():
     """
     VGG19 pre-trained on ImageNet.
-    :param weights: full path to pre-trained weights file
-    :return:
     """
-    if weights is None:
-        path = "/".join(os.path.realpath(__file__).replace("\\", "/").split("/")[:-1])
-        weights = path + "/vgg19_weights_tf_dim_ordering_tf_kernels_notop.h5"
-        if not os.path.exists(weights):
-            link = (
-                "https://github.com/fchollet/deep-learning-models/releases/download/v0.1/"
-                "vgg19_weights_tf_dim_ordering_tf_kernels_notop.h5"
-            )
-            instr = " ".join((
-                "Please download weight file from %s," % link,
-                "then put it under directory %s or manually specify the location of the weights file." % path
-            ))
-            raise Exception(instr)
+    weights = VGG19_IMAGENET_WEIGHTS
+    if not os.path.exists(weights):
+        filename = weights.split("/")[-1]
+        link = (
+            "https://github.com/fchollet/deep-learning-models/releases/download/v0.1/"
+            "vgg19_weights_tf_dim_ordering_tf_kernels_notop.h5"
+        )
+        instr = (
+            "Please download weight file %s from %s,\n" % (filename, link),
+            "then put it under directory %s" % PATH
+        )
+        raise Exception(instr)
     return vgg19(weights)
 
 
@@ -106,12 +104,11 @@ class FeatureFromVGG19ImageNet:
     Extract feature map from VGG pre-trained on ImageNet.
     """
 
-    def __init__(self, weights=None, interp=2):
+    def __init__(self, interp=2):
         """
-        :param weights: full path to pre-trained weights file
         :param interp: 0 - nearest, 1 - lanczos, 2 - bilinear, 3 - cubic
         """
-        model = vgg19_imagenet(weights)
+        model = vgg19_imagenet()
         self.size = model.input_shape[1:-1]
         self.interp = interp
         # models to extract feature map at different level

@@ -132,3 +132,7 @@ dmypy.json
 
 # idea folder
 .idea/
+
+# weights
+/color_transfer/weights/vgg19_weights_tf_dim_ordering_tf_kernels_notop.h5
+/color_transfer/weights/pspnet50_ade20k.h5

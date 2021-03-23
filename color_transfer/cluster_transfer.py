@@ -18,6 +18,7 @@ from color_transfer.parts.fast_guided_filter import fast_guided_filter
 from color_transfer.parts.nnf_computation import nn_search as nn_search_py, bds_vote as bds_vote_py
 from color_transfer.parts.nnf_computation_c import nn_search as nn_search_c, bds_vote as bds_vote_c
 from color_transfer.parts.transfer_estimate import transfer_estimate
+from color_transfer.weights import VGG19_IMAGENET_WEIGHTS
 
 
 def cluster_on_feature_pair(f1, f2, n_clusters):
@@ -53,7 +54,7 @@ def display(images, rows=1, columns=None):
 
 
 class ClusterTransfer:
-    def __init__(self, weights, patch_match_c=True):
+    def __init__(self, weights=VGG19_IMAGENET_WEIGHTS, patch_match_c=True):
         """
         :param weights: full path to weights file (download from https://github.com/fchollet/deep-learning-models/releases/download/v0.1/vgg19_weights_tf_dim_ordering_tf_kernels_notop.h5)
         :param patch_match_c: whether use C-implemented patch match, which is far more efficient than the python one
@@ -108,17 +109,11 @@ class ClusterTransfer:
 
 
 def test():
-    # download from: https://github.com/fchollet/deep-learning-models/releases/download/v0.1/vgg19_weights_tf_dim_ordering_tf_kernels_notop.h5
-    # set path to the weights file
-    weights = "D:/vgg19_weights_tf_dim_ordering_tf_kernels_notop.h5"
-
+    from color_transfer.img import DAY, NIGHT
     # choose your source and reference images
-    from color_transfer.img import PATH
-    src_file, ref_file = PATH + "/day.jpg", PATH + "/night.jpg"
-
+    src_file, ref_file = DAY, NIGHT
     src = imread(src_file)
     ref = imread(ref_file)
-
     # parameters, normally no need to change
     patch_match_c = True
     interp = 2  # bilinear
@@ -127,9 +122,8 @@ def test():
     n_clusters = 3  # 3 for sky, building and ground
     total_iter = 5  # number of iterations for PatchMatch
     epochs = 250  # number of epochs for transfer estimate
-
     # color transfer
-    ct = ClusterTransfer(weights, patch_match_c)
+    ct = ClusterTransfer(patch_match_c)
     transferred = ct.transfer(src, ref, level, n_clusters, interp, normalize, total_iter, epochs)
     display([src, ref, transferred])
 
